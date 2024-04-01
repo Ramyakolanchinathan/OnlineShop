@@ -1,0 +1,58 @@
+﻿@using ViewModel.ProductList
+@model List<ProductListViewModel>
+
+@{
+    Layout = "_Layout";
+}
+<style>
+    table {
+        width: 700px;
+        border: 1px solid black;
+        margin-left: 300px;
+        margin-top: 10px;
+    }
+
+    td {
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+    }
+
+    th {
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+    }
+
+    h1 {
+        margin-left: 500px;
+        margin-top: 50px;
+        color: darkgray;
+    }
+</style>
+<h1>Product List Detail</h1>
+<table>
+    <thead>
+        <tr>
+            @* <th>Id</th> *@
+            <th>ProductName</th>
+            <th>ProductCode</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Brand</th>
+            <th>Picture</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                @*   <td>@product.ProductId</td> *@
+                <td>@product.ProductName</td>
+                <td>@product.ProductCode</td>
+                <td>@product.Quantity</td>
+                <td>@product.Price</td>
+                <td>@product.Brand</td>
+                <td><img src="~/ProductImages/@product.Photo" style="height:80px;"></td>
+            </tr>
+        }
+    </tbody>
+</table>

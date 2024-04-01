@@ -1,0 +1,70 @@
+﻿@using DataModel.Product
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Pannel</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="~/js/site.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 200px;
+            margin-left: 70px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+            td:hover {
+                background-color: coral;
+            }
+
+        .sidenav {
+            height: 100%;
+            width: 160px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
+            margin-top: 50px;
+        }
+
+            .sidenav a {
+                padding: 6px 8px 6px 16px;
+                text-decoration: none;
+                font-size: 25px;
+                color: #818181;
+                display: block;
+            }
+
+                .sidenav a:hover {
+                    color: #f1f1f1;
+                }
+
+        .main {
+            margin-left: 160px;
+            font-size: 28px;
+            padding: 0px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidenav">
+        <a href="/Product/Display">Product</a>
+        <a href="/Product/Cart">Purchase</a>
+        <a href="/Product/List">ProductList</a>
+        <a href="/Register/Display">User</a>
+    </div>
+</body>
+</html>

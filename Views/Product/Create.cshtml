@@ -1,0 +1,292 @@
+﻿@model ViewModel.Product.ProductViewModel;
+@{
+    ViewBag.Title = "Index";
+}
+<html>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5.9.3/dist/min/dropzone.min.css" type="text/css" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        input[type=text], select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        label {
+            padding: 12px 12px 12px 0;
+            display: inline-block;
+        }
+
+        input[type=button] {
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+
+            input[type=button]:hover {
+                background-color: #45a049;
+            }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 10px;
+            width: 450px;
+        }
+
+        .col-25 {
+            float: left;
+            width: 25%;
+            margin-top: 6px;
+        }
+
+        .col-75 {
+            float: left;
+            width: 75%;
+            margin-top: 6px;
+        }
+
+        .row::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .col-25, .col-75, input[type=button] {
+            width: 100%;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Product Detail</h2>
+        <form id="register">
+            <div class="row">
+                <div class="col-25">
+                    <div class="col-75">
+                        <input type="number" id="ID" hidden />
+                        <label for="pname">ProductName</label>
+                    </div>
+                    <input type="text" id="pname" name="ProductName" placeholder="ProductName">
+                    <span class="text-danger" id="errorpname"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="pcode">ProductCode</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" id="pcode" name="ProductCode" placeholder="ProductCode">
+                    <span class="text-danger" id="errorpcode"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="pcode">Price</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" id="price" name="Price" placeholder="Price">
+                    <span class="text-danger" id="errorprice"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="pcode">Quantity</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" id="quantity" name="Quantity" placeholder="Quantity">
+                    <span class="text-danger" id="errorquantity"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="brand">Brand</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" id="brand" name="Brand" placeholder="Brand">
+                    <span class="text-danger" id="errorbrand"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="photo">Image</label>
+                </div>
+                <div class="col-75">
+                    <input type="file" id="photo" name="Photo" enctype="multipart/form-data" onchange='UploadTempImage()' multiple>
+                    <span class="text-danger" id="errorphoto"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25" id="imgPreview">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <input id="Save" type="button" value="Submit">
+            </div>
+        </form>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script>
+        // $(document).ready(function () {
+        //     debugger;
+        //     $('#photo').click(function (e) {
+        //         e.preventDefault();
+        //         debugger;
+        //         $.ajax({
+        //             type: 'Post',
+        //             url: "/Product/UploadMultiStream",
+        //             addRemoveLinks: true,
+        //             uploadMultiple: false,
+        //             parallelUploads: 5,
+        //             maxFilesize: 3.0,
+        //             timeout: 864000,
+        //             acceptedFiles: ".jpeg,.jpg,.png",
+        //             maxFiles: 5,
+        //             dictDefaultMessage: "Please drop/select the image in jpeg/png format only and Upload",
+        //             previewsContainer: '#preview',
+        //             headers: {
+        //                 'session': 'test',
+        //                 'type': '1'
+        //             },
+        //             init: function () {
+        //                 this.hiddenFileInput.removeAttribute('multiple');
+        //             }
+        //         });
+        //     });
+        // });
+        var formData = new FormData();
+        $(document).ready(function () {
+            $("#photo").on("change", function () {
+                var photo = document.getElementById('photo');
+                for (i = 0; i < photo.files.length; i++) {
+                    var sphoto = photo.files[i].name;
+                    let srandomid = Math.random().toString(36).substring(7);
+
+                    formdata.append(sphoto, photo.files[i]);
+                    var markup = "<tr id='" + srandomid + "'><td>" + sphoto + "</td></tr>";
+                }
+                chkatchtbl();
+                $('#photo').val('');
+            });
+        });
+        $("#Save").click(function () {
+            debugger;
+            formdata.append('Photo', $('#photo').val());
+            $.ajax({
+                url: '/Product/InsertProductDetail',
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                async: false,
+                success: function (result) {
+                    if (result != "") {
+                        alert(result);
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        });
+        $(document).ready(function () {
+            debugger;
+
+            $('#Save').click(function (e) {
+                e.preventDefault();
+                debugger;
+
+                var isValid = true;
+                $("#errorpname").text("");
+                var pname = $("#pname").val();
+
+                if ($("#pname").val() == "") {
+                    $("#errorpname").text("Product Name is Required");
+                    isValid = false;
+                }
+
+                $("#errorpcode").text("");
+                var pcode = $("#pcode").val();
+                if ($("#pcode").val() == "") {
+                    $("#errorpcode").text("Product Code is Required");
+                    isValid = false;
+                }
+
+                $("#errorquantity").text("");
+                var quantity = $("#quantity").val();
+                if ($("#quantity").val() == "") {
+                    $("#errorquantity").text("Quantity of the product is Required");
+                    isValid = false;
+                }
+
+                $("#errorbrand").text("");
+                var brand = $("#brand").val();
+                if ($("#brand").val() == "") {
+                    $("#errorbrand").text(" product brand is Required");
+                    isValid = false;
+                }
+
+                $("#errorphoto").text("");
+                var files = $("#photo")[0].files;
+                if ($("#photo").val() == "") {
+                    $("#errorphoto").text(" product Image is Required");
+                    isValid = false;
+                }
+
+                $("#errorprice").text("");
+                var price = $("#price").val();
+                var id = $("#Id").val();
+                var formdata = new FormData();
+                formdata.append("ProductName", pname);
+                formdata.append("ProductCode", pcode);
+                formdata.append("Price", price);
+                formdata.append("Quantity", quantity);
+                formdata.append("Brand", brand);
+                formdata.append("file", files[0]);
+                debugger;
+                formdata.append("Id", id);
+                if (isValid) {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/Product/InsertProductDetail',
+                        data: formdata,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+
+                            if (data == true) {
+                                alert("success");
+                                window.location.href = "@Url.Action("Display", "Product")"
+                            }
+                            else {
+                                alert('Error');
+                            }
+                        },
+                        error: function () {
+                            // console.log(error);
+                            alert("Content load failed.")
+                        }
+                    });
+                }
+                else {
+                    return false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

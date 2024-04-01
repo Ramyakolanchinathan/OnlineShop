@@ -1,0 +1,296 @@
+﻿@using ViewModel.Product
+@model List<ProductViewModel>
+@{
+    Layout = "_Layout";
+}
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<style>
+    .table {
+        width: 1000px;
+        border: 1px solid black;
+        margin-left: 220px;
+        margin-top: 10px;
+    }
+
+    td {
+        border-right: 1px solid black;
+    }
+
+    th {
+        border-right: 1px solid black;
+    }
+
+    h1 {
+        margin-left: 500px;
+        margin-top: 50px;
+        color: darkgray;
+    }
+
+    .create {
+        color: gray;
+        font-family: 'Sitka Small';
+        margin-left: 920px;
+        text-decoration: none;
+    }
+
+        .create:hover {
+            color: black;
+            font-size: 20px;
+        }
+
+    .button:hover {
+        color: black;
+        font-size: 20px;
+    }
+</style>
+<h1>Product Detail</h1>
+
+<a asp-action="Create" asp-controller="Product" class="create"> Create </a>
+
+<form asp-action="SearchDate" asp-controller="Product" style="margin-left:350px;">
+    From Date:<input type="date" name="fromDate" />
+    To Date:<input type="date" name="toDate" />
+    <input type="submit" value="Submit" class="btn btn-success" />
+    <a asp-action="Display" asp-controller="Product" style="text-decoration:none;">Get all records</a>
+</form>
+
+<a asp-action="Cart" asp-controller="Product" value="Back" class="btn btn-primary" style="margin-left:220px;">Back </a>
+
+<table id="tbl" class="table">
+    <thead>
+        <tr>
+            <th id="id">Id</th>
+            <th>Product Name</th>
+            <th>Product Code</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Brand</th>
+            <th>Picture</th>
+            <th>Created Date</th>
+            <th>Action</th>
+            <th> </th>
+            <th>Json</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Item in Model)
+        {
+            <tr>
+                <td id="productId">@Item.ProductId</td>
+                <td id="productName">@Item.ProductName</td>
+                <td id="productCode">@Item.ProductCode</td>
+                <td id="price">@Item.Price</td>
+                <td id="quantity">@Item.Quantity</td>
+                <td id="brand">@Item.Brand</td>
+                <td><img src="~/ProductImages/@Item.Photo" style="height:80px;"></td>
+                <td id="createdDate">@Item.CreatedDate</td>
+                <td><button data-id="@Item.ProductId" data-bs-toggle="modal" data-bs-target="#modalLoginForm" class="button" id="edit">Edit</button> </td>
+                <td><button data-id="@Item.ProductId" id="delete" class="button">Delete</button></td>
+                <td><button data-id="@Item.ProductId" data-name="@Item.ProductName" data-code="@Item.ProductCode" data-price="@Item.Price" data-quantity="@Item.Quantity" data-brand="@Item.Brand" data-photo="@Item.Photo" data-createdDate="@Item.CreatedDate" id="jsonFile">TakeCopy</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Edit</h4>
+                <a href="/Product/Display/" type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+            </div>
+            <input type="hidden" id="ProductId">
+            <div class="modal-body mx-3">
+
+                <div class="md-form mb-4">
+                    <input type="text" id="ProductName" class="form-control validate" placeholder="ProductName">
+                </div>
+
+                <div class="md-form mb-4">
+                    <input type="text" id="ProductCode" class="form-control validate" placeholder="ProductCode">
+                </div>
+
+                <div class="md-form mb-4">
+                    <input type="text" id="Price" class="form-control validate" placeholder="Price">
+                </div>
+                <div>
+                    <input type="checkbox" id="isActive" checked="checked" value="true" />
+                    <label for="isActive">Avalability</label>
+                </div>
+                <div class="md-form mb-4">
+                    <input type="number" id="Quantity" class="form-control validate" placeholder="Quantity">
+                </div>
+
+                <div class="md-form mb-4">
+                    <input type="text" id="Brand" class="form-control validate" placeholder="Brand">
+                </div>
+                <input type="text" id="txtphoto" hidden />
+                <div class="md-form mb-4">
+                    <input type="file" id="Photo" class="form-control validate" onchange="LoadImage(this)" placeholder="ProductPhoto" accept="image/*">
+                </div>
+                <div id="image">
+                </div>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-center">
+                <button id="Save" class="btn btn-default">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+
+    $("#tbl").on('click', "#edit", function () {
+        
+        var id = $(this).data("id");
+        $.ajax({
+            url: '/Product/GetById/' + id,
+            type: 'GET',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                
+                // $("#image").html('');
+                $("#ProductId").val(data.productId);
+                $("#ProductName").val(data.productName);
+                $("#ProductCode").val(data.productCode);
+                $("#Price").val(data.price);
+                $("#isActive").val(data.isActive);
+                $("#Quantity").val(data.quantity);
+                $("#Brand").val(data.brand);
+                $("#txtphoto").val(data.photo);
+                $("#image").html("<img src='/productimages/" + data.photo + "' style='height:150px'>");
+            }
+        });
+    });
+
+    function LoadImage(input) {
+       
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#image").html("<img src='/Productimages/" + e.target.result + "' style='height:150px'>");
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    $(document).ready(function () {
+        
+        $("#Save").click(function () {
+            
+            var productName = $("#ProductName").val();
+            var productCode = $("#ProductCode").val();
+            var price = $("#Price").val();
+            var isActive = $("#isActive").val();
+            var quantity = $("#Quantity").val();
+            var brand = $("#Brand").val();
+            var files = $("#Photo")[0].files;
+            var photos = $("#txtphoto").val();
+            var productphoto = $("#Photo").val();
+            var id = $("#ProductId").val();
+            var formdata = new FormData();
+            formdata.append("ProductName", productName);
+            formdata.append("ProductCode", productCode);
+            formdata.append("Price", price);
+            formdata.append("IsActive", isActive);
+            formdata.append("Quantity", quantity);
+            formdata.append("Brand", brand);
+            formdata.append("file", files[0]);
+            formdata.append("Photo", photos);
+            formdata.append("Photo", productphoto);
+            formdata.append("ProductId", id);
+
+            $.ajax({
+                type: 'POST',
+                url: '/Product/UpdateProductDetail',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data > 0) {
+                        alert("success");
+                        window.location.href = "@Url.Action("Display", "Product")"
+                    }
+                    else {
+                        alert('Error');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+    $("#tbl").on('click', "#delete", function () {
+        
+        var id = $(this).data("id");
+        $.ajax({
+            url: '/Product/DeleteProductDetail/' + id,
+            success: function () {
+
+                alert('Record Deleted!');
+                window.location.href = "@Url.Action("Display", "Product")"
+            },
+            error: function () {
+                alert("Data can't be deleted!")
+            }
+        });
+    });
+    $("#tbl").on('click', "#jsonFile", function () {
+        
+        // var productListViewModel = {
+        //     Id: 5,
+        //     jsonFormat: [
+        //         { name: 'Some Guy', age: 34, location: 'Las Vegas, NV 89128' },
+        //         { name: 'Some Girl', age: 25, location: 'Seattle, WA 98145' }
+        //     ]
+        // };
+        // $.ajax('/Product/Upload', {
+        //     method: 'Post',
+        //     contentType: 'application/json; charset=utf-8',
+        //     dataType: 'json',
+        //     data: JSON.stringify(productListViewModel),
+        //     processData: false,
+        //     async:true,
+        //     success: function (d) {
+        //         //do stuff
+        //     }
+        // });
+        var ProductList = {
+            id: $(this).data("id"),
+            productName: $(this).data("name"),
+            productCode: $(this).data("code"),
+            price: $(this).data("price"),
+            quantity: $(this).data("quantity"),
+            brand: $(this).data("brand"),
+            photo: $(this).data("photo"),
+            createdDate: $(this).data("createdDate")
+        }
+        var postData = {
+            JsonFormat: JSON.stringify(ProductList),
+        };
+        $.ajax({
+            type: "Post",
+            url: "/Product/Upload",
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            data: JSON.stringify(postData),
+            processData: false,
+            success: function (data) {
+                alert("Updated Successfully.")
+                window.location.href = "@Url.Action("List", "Product")"
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>

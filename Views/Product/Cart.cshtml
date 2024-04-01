@@ -1,0 +1,222 @@
+﻿@using ViewModel.Product
+@model List<ProductViewModel>
+@{
+    Layout = "_Layout";
+}
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<style>
+    .table {
+        width: 700px;
+        border: 1px solid black;
+        margin-left: 300px;
+        margin-top: 10px;
+    }
+
+    td {
+        border-right: 1px solid black;
+    }
+
+    th {
+        border-right: 1px solid black;
+    }
+
+    h1 {
+        margin-left: 500px;
+        margin-top: 50px;
+        color: darkgray;
+    }
+
+    .row {
+        margin-left: 500px;
+        padding: 10px;
+    }
+
+</style>
+<h1>Product Detail</h1>
+
+<form method="get" asp-action="Search" asp-controller="Product">
+    <p style="margin-left:350px;">
+        <input type="search" placeholder="Enter Product name to search" value="@ViewData["GetProductDetails"]" name="SearchProduct" style="width:500px;" />
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </p>
+</form>
+<a asp-action="Cart" asp-controller="Product" value="Back" class="btn btn-primary" style="margin-left:350px;">Back </a>
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name" style="margin-left:350px;">
+
+
+<table id="tbl" class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Product Code</th>
+            <th>Price</th>
+            <th>Brand</th>
+            <th>Quantity</th>
+            <th>Picture</th>
+            <th>Action</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+
+                <td>@product.ProductName</td>
+                <td>@product.ProductCode</td>
+                <td>@product.Price</td>
+                <td>@product.Brand</td>
+                <td id="qnty" name="qnty">@product.Quantity</td>
+                <td><img src="~/ProductImages/@product.Photo" style="height:80px;"></td>
+                <td><button data-id="@product.ProductId" data-bs-toggle="modal" data-bs-target="#modalLoginForm" id="buy">Buy</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" enctype="multipart/form-data">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Buy</h4>
+                <a href="/Product/Cart/" type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+            </div>
+            <input type="hidden" id="productId">
+            <input type="hidden" id="purchaseId" />
+            <div class="modal-body mx-3">
+                <div class="md-form mb-4">
+                    <input type="text" id="productName" class="form-control validate" placeholder="ProductName" disabled>
+                </div>
+
+                <div class="md-form mb-4">
+                    <input type="text" id="productCode" class="form-control validate" placeholder="ProductCode" disabled>
+                </div>
+
+                <div class="md-form mb-4">
+                    <input type="text" id="price" name="Price" class="form-control validate" placeholder="Price" disabled>
+                </div>
+                <input type="text" name="Qty" id="qty" hidden />
+                <div class="md-form mb-4">
+                    <input type="number" id="quantity" name="Quantity" value="0" onkeydown="return false" min="1" class="form-control validate" placeholder="Quantity" onclick="multiply()">
+                </div>
+
+                <div class="md-form mb-4">
+                    <input type="text" id="brand" class="form-control validate" placeholder="Brand" disabled>
+                </div>
+
+                <div id="image">
+                </div>
+            </div>
+            <div class="md-form mb-4">
+                <input type="number" id="total" name="Total" class="form-control validate" placeholder="Total" />
+            </div>
+
+            <div class="modal-footer d-flex justify-content-center">
+                <input type="button" value="Buy" id="buyProduct" class="btn btn-default" onKeyUp="Buy()">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $("#tbl").on('click', "#buy", function () {
+      
+        var id = $(this).data("id");
+        $.ajax({
+            url: '/Product/GetById/' + id,
+            type: 'GET',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                debugger;
+                $("#image").html('');
+                $("#productId").val(data.productId);
+                $("#productName").val(data.productName);
+                $("#productCode").val(data.productCode);
+                $("#price").val(data.price);
+                $("#qty").val(data.quantity);
+                $("#brand").val(data.brand);
+                $("#photo").val(data.files);
+                $("#image").append("<img src='/productimages/" + data.photo + "' style='height:150px'>");
+
+            }
+        });
+    });
+    function multiply() {
+        debugger;
+        var a = Number(document.getElementById('quantity').value);
+        var b = Number(document.getElementById('price').value);
+        var c = a * b;
+        document.getElementById('total').value = c;
+    }
+    $("#modalLoginForm").on('click', "#buyProduct", function () {
+      
+        var productId = $("#productId").val();
+        var totalQuantity = $("#qty").val();
+        var newQuantity = $("#quantity").val();
+        var reducedQuantity = totalQuantity - newQuantity;
+        var totalPrice = $("#total").val();
+        var brand = $("#brand").val();
+        var formdata = new FormData();
+        formdata.append("ProductId", productId);
+        formdata.append("TotalQuantity", reducedQuantity);
+        formdata.append("TotalPrice", totalPrice);
+        formdata.append("Brand", brand);
+        formdata.append("PurchaseQuantity", newQuantity)
+        $.ajax({
+            type: 'Post',
+            url: '/Product/UpdateQuantityDetail',
+            data: formdata,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data == true) {
+                    alert("success");
+                    window.location.href = "@Url.Action("Display", "Product")"
+                }
+                else {
+                    alert('Error');
+                }
+            },
+            error: function () {
+                // console.log(error);
+                alert("Content load failed.")
+            }
+        });
+    });
+
+    function LoadImage(input) {
+        debugger;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#image").html("<img src='/Productimages/" + e.target.result + "' style='height:150px'>");
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function myFunction() {
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tbl");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

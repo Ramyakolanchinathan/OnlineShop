@@ -1,0 +1,47 @@
+﻿@using ViewModel.Login
+@model List<LoginViewModel>
+@{
+    Layout = "_Layout";
+}
+<style>
+    .table {
+        margin-top: 10px;
+    }
+</style>
+<h1>Table</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th> ID</th>
+            <th> FirstName</th>
+            <th>LastName</th>
+            <th>Email</th>
+            <th>CandidateId</th>
+            <th>RoleId</th>
+            @* <th>File</th> *@
+            <th>Gender</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.CandidateId</td>
+                <td>@user.RoleId</td>
+                @*  <td>
+            <img src="~/Images/@user.Photo"
+            class="rounded-circle"
+            height="40" width="40"
+            asp-append-version="true" />
+            @user.Id
+            </td> *@
+                <td>@user.Gender</td>
+            </tr>
+        }
+    </tbody>
+</table>

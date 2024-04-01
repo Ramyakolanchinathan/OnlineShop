@@ -1,0 +1,158 @@
+﻿@model ViewModel.Login.LoginViewModel
+
+<!DOCTYPE html>
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>User</title>
+
+    <style type="text/css">
+        .form {
+            margin-top: 40px;
+            margin-left: 450px;
+        }
+
+        h1 {
+            font-variant: small-caps;
+            color: plum;
+            margin-left: 500px;
+            margin-top: 30px;
+        }
+
+        .form-control {
+            width: 300px;
+            border: 3px solid plum;
+        }
+
+        label {
+            color: purple;
+        }
+
+        .btn-success {
+            background-image: linear-gradient(to left, rgba(100,50,50), rgba(250,50,60,1));
+            margin-left: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Register</h1>
+    @using (Html.BeginForm("InsertUserDetail", "Register", FormMethod.Post, htmlAttributes: new
+    {
+        enctype = "multipart/form-data"
+    }))
+    {
+        <div class="form-group">
+            <label>First Name</label>
+            @Html.TextBoxFor(m => m.FirstName, "", new
+                {
+                    @class = "form-control",
+                    required = "required",
+                    minlength = "3",
+                    maxlength = "10"
+                })
+           
+
+           @*  @Html.ValidationMessageFor(m => m.FirstName, "", new
+                {
+                    @class = "text-danger"
+                }) *@
+        </div>
+
+        <div class="form-group">
+            <label>Last Name</label>
+            @Html.TextBoxFor(m => m.LastName, "", new
+                {
+                    @class = "form-control"
+                })
+            @* @Html.ValidationMessageFor(m => m.LastName, "", new
+                {
+                    @class = "text-danger"
+                }) *@
+        </div>
+        <div class="form-group">
+            <input type="date" asp-for="DOB" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Gender</label>
+            Male
+            @Html.RadioButtonFor(m => m.Gender, "male", 1)
+            Female
+            @Html.RadioButtonFor(m => m.Gender, "female", 2)
+        </div>
+
+        <div class="form-group">
+            <label>CandidateId</label>
+            @Html.TextBoxFor(m => m.CandidateId, "", new
+                {
+                    @class = "form-control"
+                })
+            @* @Html.ValidationMessageFor(m => m.CandidateId, "", new
+                {
+                    @class = "text-danger"
+                }) *@
+        </div>
+
+        <div class="form-group">
+            <label>Role</label>
+            @Html.DropDownListFor(m => m.RoleId, new List<SelectListItem>
+        { new SelectListItem{Text="Admin", Value="1"},
+        new SelectListItem{Text="User", Value="2"}}, "Please select")
+
+            @*     @Html.ValidationMessageFor(m=>m.RoleId,"",new{
+        @class="text-danger"
+        }) *@
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            @Html.TextBoxFor(m => m.Email, "", new
+                {
+                    @class = "form-control"
+                })
+           @*  @Html.ValidationMessageFor(m => m.Email, "", new
+                {
+                    @class = "text-danger"
+                }) *@
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            @Html.TextBoxFor(m => m.Password, "", new
+                {
+                    @class = "form-control"
+                })
+           @*  @Html.ValidationMessageFor(m => m.Password, "", new
+                {
+                    @class = "text-danger"
+                }) *@
+        </div>
+        <br />
+
+        @* <div class="form-group"><label class="col-form-label">Select File</label>
+    @Html.TextBoxFor(m => m.Photo, null, new { @type = "file", @class = "input-file", @style = "small_box", @enctype = "multipart/form-data" })
+    @Html.ValidationMessageFor(m=>m.Photo,"",new{
+    @class="text-danger"
+    })
+    </div> *@
+
+        <div class="form-group">
+            <input type="submit" asp-action="InsertUserDetail" asp-controller="Register" value="submit" class="btn-success" onclick="myFunction()" />
+            <div class="form-group"><a href="/Register/Display">View</a></div>
+
+        </div>
+    }
+</body>
+
+
+
+
+
+
+
+
+
+
+
